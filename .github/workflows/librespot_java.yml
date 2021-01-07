@@ -1,0 +1,23 @@
+name: Android CI
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build librespot-java with Maven
+        run: |
+          mvn --batch-mode --update-snapshots verify
+          mkdir staging
+          cp api/target/*-SNAPSHOT.jar staging
+          cp lib/target/*-SNAPSHOT.jar staging
+          cp player/target/*-SNAPSHOT.jar staging
+
+      - name: Uploading artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: librespot-java_packages
+          path: staging
